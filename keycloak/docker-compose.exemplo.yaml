@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+ postgres:
+    image: postgres:12
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - keycloak-dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+      POSTGRES_DB: keycloak
+  keycloak:
+    image: jboss/keycloak:15.0.0
+    container_name: keycloak
+    restart: always
+    ports: 
+      - "8080:8080"
+    environment: 
+      - KEYCLOAK_USER: admin
+      - KEYCLOAK_PASSWORD: admin
+      - DB_VENDOR: postegres
+      - DB_ADDR: keycloak
+      - DB_USER: keycloak
+      - DB_PASSWORD: keycloak
+      - DB_SCHEMA: public
+      - DB_DATABASE: keycloak
+    depends_on: 
+      - postgres
+
+volumes:
+  keycloak-dbdata:
+    external: true
